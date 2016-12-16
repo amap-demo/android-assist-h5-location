@@ -22,19 +22,41 @@
 </head>
 <body>
 <div id="container"></div>
-<div class="button-group"> <!-- class="button-group" -->
-    <input type="button" class="button" style="margin-right:40px; margin-top:4px" value="更新定位" id="location" onclick="window.callBack.callLocation()"/>
-    <!--<input type="button" class="button" value="添加点标记覆盖物" id="addMarker"/>-->
-    <!--<input type="button" class="button" value="更新定位" id="updateMarker" onclick="window.callBack.callLocation()"/>-->
-    <!--<input type="button" class="button" value="删除点标记覆盖物" id="clearMarker"/>-->
+<div id="tip"></div>
 
-</div>
 <script>
     var marker, map = new AMap.Map("container", {
         resizeEnable: true,
         center: [116.397428, 39.90923],
         zoom: 13
     });
+        map.plugin('AMap.Geolocation', function() {
+        geolocation = new AMap.Geolocation({
+            enableHighAccuracy: true,//是否使用高精度定位，默认:true
+            timeout: 100000,          //超过10秒后停止定位，默认：无穷大
+            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            buttonPosition:'RB',
+            useNative:true
+        });
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition();
+        AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
+        AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
+    });
+    //解析定位结果
+    function onComplete(data) {
+        var str=['定位成功'];
+        str.push('经度：' + data.position.getLng());
+        str.push('纬度：' + data.position.getLat());
+        str.push('精度：' + data.accuracy + ' 米');
+        str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
+        document.getElementById('tip').innerHTML = str.join('<br>');
+    }
+    //解析定位错误信息
+    function onError(data) {
+        document.getElementById('tip').innerHTML = '定位失败'+data.message;
+    }
     AMap.event.addDomListener(document.getElementById('addMarker'), 'click', function() {
         addMarker();
     }, false);
@@ -95,6 +117,7 @@
         marker.setContent(markerContent); //更新点标记内容
         marker.setPosition([116.391467, 39.927761]); //更新点标记位置
     }
+
 </script>
 </body>
 </html>
