@@ -1,6 +1,6 @@
 # android-assist-h5-location
 辅助H5定位：
-通过定位SDK获取单次定位结果，将定位结果打点在H5地图上.
+Javascript-Api实现H5页面的App，当页面需要使用位置时可以选择使用定位 SDK 辅助提供位置信息。
 
 ## 前述 ##
 - [高德官网申请Key](http://lbs.amap.com/dev/#/).
